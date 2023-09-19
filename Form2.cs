@@ -485,6 +485,7 @@ namespace PixelArt
             Data.art_name = "";
             Data.photo_path = "";
             Data.extile_path = "";
+            Data.File_Photo_list = null;
             //Data.output_path = "";
         }
         private void TexBox_SetZero(bool shit)
