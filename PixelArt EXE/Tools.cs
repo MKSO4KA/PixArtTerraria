@@ -5,17 +5,111 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Aspose.Cells;
+
+using System.IO.Ports;
+using System.Threading;
 
 namespace PixelArt
 {
+    /// <summary>
+    /// Инструменты/Функции, которые требуются для работы
+    /// </summary>  
     internal static class Tools
     {
+        private static int pixelcount = 67;
+        private static string HexConverter(System.Drawing.Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
+        public static List<Color> CellColors = new List<Color>();
+        //public static char[] CellChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        private static Color ReverseCol(Color color)
+        {
+            ColorConverter colorConverter = new ColorConverter();
+            ColorToHSV(color, out double hue, out double saturation, out double value);
+            hue = (hue + 180) % 360;
+            //saturation = (saturation > 0.9) ? Math.Abs(saturation - 0.5) : Math.Abs(saturation - 0.25);
+            //value = (value > 0.5) ? Math.Abs(value - 0.5) : Math.Abs(value + 0.5);
+            value = (value > 0.5) ? 0 : 1;
+            return ColorFromHSV(hue, 1, value);
+        }
+        /// <summary>
+        /// Создание экселевской книги. 
+        /// Книга создана таким образом, что каждая ячейка представляет собой покрашеную клетку с точным цветом и названием тайла. 
+        /// </summary> 
+        /// <param name="array">Главый файл, который обычно записывается в photo.txt</param>
+        public static void Create_XLSX(object sender)
+        {
+            int Xend = Convert.ToInt32(Data.x);
+            int Yend = Convert.ToInt32(Data.y);
+            string[] Cells = Data.File_Photo_list.ToArray();
+            Data.WorkName = "Создаю таблицу";
+            Color[] Colors = CellColors.ToArray();
+            Workbook wb = new Workbook();
+            Worksheet sheet = wb.Worksheets[0];
+            int index = 0;
+            Cell cell;
+            Style style;
+            Color color;
+            
+            for (int x = 0; x < Xend; x++)
+            {
+                for (int y = 0; y < Yend; y++)
+                {
+                    if (Data.DoWork == false) { return; }
+                    int indent = y * Xend + x;
+                    color = Colors[index];
+                    //colorstr = HexConverter(color);
+                    wb.ChangePalette(color, 55);
+                    (sender as BackgroundWorker).ReportProgress(Tools.BrogB_Increase(index, Cells.Length));
+                    cell = sheet.Cells[column: x, row: y];
+                    //if (color.GetBrightness() < 0.2) { style.Font.Color = color.}
+                    #region SetStyle
+                    style = cell.GetStyle();
+                    style.ForegroundColor = wb.Colors[55];
+                    style.BackgroundColor = wb.Colors[55];
+                    style.Pattern = BackgroundType.Solid;
+                    style.Font.Color = ReverseCol(color);
+                    style.IsTextWrapped = true;
+                    style.SetBorder(BorderType.LeftBorder, CellBorderType.Thin, color == Color.Black? Color.Gray : Color.Black);
+                    style.SetBorder(BorderType.RightBorder, CellBorderType.Thin, color == Color.Black ? Color.Gray : Color.Black);
+                    style.SetBorder(BorderType.TopBorder, CellBorderType.Thin, color == Color.Black ? Color.Gray : Color.Black);
+                    style.SetBorder(BorderType.BottomBorder, CellBorderType.Thin, color == Color.Black ? Color.Gray : Color.Black);
+                    #endregion
+                    cell.SetStyle(style);
+                    cell.PutValue(indent.ToString() + "\n" + Cells[index] + "\n" + index);
+                    //cell.HtmlString = "<Font Style=\"FONT-FAMILY: Arial;FONT-SIZE: 10pt;COLOR: " + colorstr + ";\"></Font>";
+                    index++;
+                }
+
+            }
+            
+            Cells cells = sheet.Cells;
+            for (int x = 0; x < Xend; x++)
+            {
+                cells.SetColumnWidthPixel(x, pixelcount);
+                for (int y = 0; y < Yend; y++)
+                {
+                    cells.SetRowHeightPixel(y, pixelcount);
+
+                }
+            }
+            //if (!Directory.Exists(Data.save_path))
+            wb.Save(Data.save_path + Data.art_name + ".xlsx", SaveFormat.Xlsx);
+        }
+        #region Photo-Pixels
 
 
         /// <summary>
-        /// Инструменты/Функции, которые требуются для работы
-        /// </summary>    
-        #region Photo-Terraria
+        /// Главная функция всей программы. 
+        /// Конвертирует изображение из одной палитры в другую.
+        /// Конвертация может длится больше 10 часов.
+        /// Затем генерирует это изображение в picturebox-объекте, для удобства просмотра.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="xstart">Начальная координата по Х для создания арта.</param>
         public static void CreateTilesPhoto(object sender, DoWorkEventArgs e, int xstart = 0)
         {
             /*
@@ -34,19 +128,21 @@ namespace PixelArt
             var chunkLength = (int)Math.Ceiling(totalLength / (double)nChunks);
             var parts = Enumerable.Range(0, nChunks)
                                   .Select(i => Photo_notSort.Skip(i * chunkLength).Take(chunkLength)).ToArray();
+            if (Data.DoWork == false) { return; }
             //string[] list = new string[] { "1", xstart.ToString() + ":" + x.ToString(), y.ToString() };
             Data.x = x.ToString();
             Data.y = y.ToString();
             Data.xstart = xstart.ToString();
             //File.WriteAllLines(Data.save_path + "photo.txt", list);
             int MainIndex = 0;
-
+            Color CellColor;
             foreach (var Chunk2 in parts)
             {
+                if (Data.DoWork == false) { return; }
                 (sender as BackgroundWorker).ReportProgress(Tools.BrogB_Increase(MainIndex, parts.Length));
                 MainIndex++;
                 int index = 0;
-
+                if (Data.DoWork == false) { return; }
                 Color[] Chunk = Chunk2.ToArray();
                 Color[] Photo_Sort = Tools.RemDuple(Chunk); // 4 mass
                 Color[] Main_File = new Color[Photo_Sort.Length];
@@ -54,11 +150,12 @@ namespace PixelArt
                 var maxindex = Photo_Sort.Length;
                 foreach (var item in Photo_Sort)
                 {
+                    if (Data.DoWork == false) { return; }
                     (sender as BackgroundWorker).ReportProgress(Tools.EqProgressBarInc(index, maxindex, parts.Length, 2));
                     // 3 arg = max lenght
                     //(sender as BackgroundWorker).ReportProgress(Tools.BrogB_Increase(index, Photo_Sort.Length));
 
-                    Main_File[index] = Tools.nearest(list_colors, item);
+                    Main_File[index] = (item.A < 20) ? Color.FromArgb(0,0,0,0) : Tools.nearest(list_colors, item);
                     index++;
                 } // 5 mass
                 Data.Percent = Data.Percent2;
@@ -68,11 +165,21 @@ namespace PixelArt
                 maxindex = Chunk.Length;
                 foreach (var item in Chunk)
                 {
+                    if (Data.DoWork == false) { return; }
+                    string lp;
                     (sender as BackgroundWorker).ReportProgress(Tools.EqProgressBarInc(index, maxindex, parts.Length, 2));
-                    //(sender as BackgroundWorker).ReportProgress(Tools.BrogB_Increase(MainIndex, parts.Length));
-                    //var lp = list_tiles[Array.IndexOf(list_colors, Main_File[index])];
-                    var lp = list_tiles[Array.IndexOf(list_colors, Main_File[Array.IndexOf(Photo_Sort, item)])];
-                    //var lp = list_tiles[Array.IndexOf(list_colors, Main_File[i])];
+                    if (item.A < 20)
+                    {
+                        lp = "3:0:0";
+                        CellColors.Add(Color.White);
+                    }
+                    else
+                    {
+                        
+                        CellColor = Main_File[Array.IndexOf(Photo_Sort, item)];
+                        lp = list_tiles[Array.IndexOf(list_colors, CellColor)];
+                        CellColors.Add(CellColor);
+                    }
                     FileMassive[index] = lp;
                     index++;
                 }
@@ -80,11 +187,12 @@ namespace PixelArt
                 //File.AppendAllLines(@"C:\ARTs\sda\aasd.txt", FileMassive);
 
             }
+            #endregion
             Data.File_Photo_list = MainFile.ToArray();
             (sender as BackgroundWorker).ReportProgress(Tools.SetZeroPercentage());
 
 
-            #endregion
+
 
             Data.WorkName = null;
             //Data.extile_path = @"C:\ARTs\sda\aasd.txt";
@@ -92,14 +200,19 @@ namespace PixelArt
 
             //return "TEMP";
         }
+        /// <summary>
+        /// Создаёт два массива, которые выходят из него. 
+        /// </summary>
+        /// <param name="list_colors">System.Drawing.Color лист</param>
+        /// <param name="list_tiles">System.String лист</param>
         public static void Enumerating(out Color[] list_colors, out string[] list_tiles)
         {
+            
             // vid 1:4:29:000000
-
             //(double, double, double)[] list_frompic = Tools.RemDuple(GetHueMass());
             string filepath = Data.tiles_path;
             Color color;
-            double hue, saturation, value;
+            //double hue, saturation, value;
             list_tiles = fileREAD(filepath);
             list_colors = new Color[list_tiles.Length];
             // Create list of tiles colors.
@@ -115,11 +228,21 @@ namespace PixelArt
                 var new_line = line[0] + ":" + line[1] + ":" + line[2];
                 list_tiles[Array.IndexOf(list_tiles, item)] = new_line;
             }
+            //list_tiles = list_tiles.ToList().Append("3:0:0").ToArray();
+            //list_colors = list_colors.ToList().Append(Color.FromArgb(0,0,0,0)).ToArray();
 
         }
         #endregion
         
         #region Bitmaps
+        /// <summary>
+        /// Генерирует изображение и возвращает его же
+        /// </summary>
+        /// <param name="list_colors">Лист с цветами в шестнадцатеричном формате, в виде строки</param>
+        /// <param name="list_tiles">Тайлы, в формате {index,pix-id,paint}, где index = 1(или 2 или 3), pix-id = id тайла или стены, paint = id покраски.</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns>System.Drawing.Bitmap объект</returns>
         public static Bitmap CreatePhoto(Color[] list_colors, string[] list_tiles, object sender, DoWorkEventArgs e)
         {
             //CreateDirectory(Data.output_path + Data.art_name, 2);
@@ -141,12 +264,12 @@ namespace PixelArt
                 y = Convert.ToInt32(Data.y);
                 appreform = 0;
             }
-
-
+            Data.x = (Data.x == "" || Data.x == null) ? x.ToString() : Data.x;
+            Data.y = (Data.y == "" || Data.y == null) ? y.ToString() : Data.y;
+            Data.File_Photo_list = array;
             (sender as BackgroundWorker).ReportProgress(Tools.SetZeroPercentage());
             bitmap = new Bitmap(x, y);
             Data.WorkName = "Генерирую Картинку";
-
             for (var i = 0; i < x; i++)
             {
                 //mc.BrogB_Increase(i, bitmap.Width);
@@ -154,20 +277,52 @@ namespace PixelArt
                 //mc.BrogB_Increase2(10);
                 hstart = appreform + i * y;
                 //System.Threading.Thread.Sleep(100);
+                Color color;
+                if (Data.DoWork == false) { goto endWork; }
                 for (var j = 0; j < y; j++)
                 {
-                    bitmap.SetPixel(i, j, list_colors[Array.IndexOf(list_tiles, array[j + hstart])]);
+                    string countion = array[j + hstart];
+                    color = list_colors[Array.IndexOf(list_tiles, countion)];
+                    if (countion == "3:0:0")
+                    {
+                        bitmap.SetPixel(i, j, Color.FromArgb(0,0,0,0));
+                        CellColors.Add(Color.White);
+                    }
+                    else
+                    {
+                        bitmap.SetPixel(i, j, color);
+                        CellColors.Add(color);
+                    }
                     //var pixel = bitmap.GetPixel(i, j);
                 }
             }
             Data.WorkName = null;
-
-            bitmap.Save(Data.save_path + "modificed_" + Data.art_name + ".jpg");
+            endWork:
+            SaveAll();
+            if (Data.DoWork == true)
+            {
+                bitmap.Save(Data.save_path + "modificed_" + Data.art_name + ".jpg");
+                return bitmap;
+            }
+            return new Bitmap(1, 1);
+        }
+        private static void SaveAll()
+        {
             if (Data.extile_path != "" && Data.extile_path != null) { File.Copy(Data.extile_path, Data.save_path + "photo.txt"); } else { File.WriteAllLines(Data.save_path + "photo.txt", new string[] { "1", Data.xstart + ":" + Data.x, Data.y }); File.AppendAllLines(Data.save_path + "photo.txt", Data.File_Photo_list); }
             if (Data.photo_path != "" && Data.photo_path != null) { File.Copy(Data.photo_path, Data.save_path + "original_" + Data.art_name + ".jpg"); };
             File.Copy(Data.tiles_path, Data.save_path + "used tiles.txt");
-            return bitmap;
         }
+        /// <summary>
+        /// Модуль возвращает массив,
+        ///     содержащий цвета пикселя на каждой.
+        ///     Цвета формируются такким образом:
+        ///     Скрипт идет сверху в низ анализируя каждый пиксель,
+        ///     затем идет на пиксель вправо и повторяет прошлый пункт.
+        /// </summary>
+        /// <param name="filepath">Путь до фотографии</param>
+        /// <param name="x">Длина фото</param>
+        /// <param name="y">Высота фото</param>
+        /// <returns></returns>
         public static Color[] ReadPhoto(string filepath,out int x, out int y)
         {
             /*
@@ -353,6 +508,7 @@ namespace PixelArt
             else if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
+                Thread.Sleep(500);
                 Directory.CreateDirectory(path);
             }
         }

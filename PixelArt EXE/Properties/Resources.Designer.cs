@@ -63,20 +63,29 @@ namespace PixelArt_EXE.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _1664028034_GitHub_не_будет_использовать_термин_мастер_потому_что_он_расистский_780x443 {
+        internal static System.Drawing.Bitmap GH_image {
             get {
-                object obj = ResourceManager.GetObject("1664028034_GitHub-не-будет-использовать-термин-мастер-потому-что-он-расистский-78" +
-                        "0x443", resourceCulture);
+                object obj = ResourceManager.GetObject("GH-image", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        internal static System.Drawing.Icon Icon1 {
+            get {
+                object obj = ResourceManager.GetObject("Icon1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TAmniu4VreY {
+        internal static System.Drawing.Bitmap YT_image {
             get {
-                object obj = ResourceManager.GetObject("TAmniu4VreY", resourceCulture);
+                object obj = ResourceManager.GetObject("YT-image", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PixelArt
@@ -105,22 +106,24 @@ namespace PixelArt
         public void worker_CreateTiles(object sender, DoWorkEventArgs e)
         {
             //(sender as BackgroundWorker).ReportProgress(5);
+            label_invoke_INIT();
+
             Data.DataSet();
             Tools.CreateTilesPhoto(sender, e);
             //if (!PhotoVisualise_ChekArg()) { return; }
-            CreatePhoto_CoWorker();
+            
         }
 
         #endregion
-
-        #region Photo Progress Bar
-        public void CreatePhoto_CoWorker()
+        
+        #region Create Xlsx table
+        public void CreateXlsx_CoWorker()
         {
             BackgroundWorker worker = new BackgroundWorker();
 
-            worker.DoWork += worker_CreatePhoto;
+            worker.DoWork += worker_CreateXlsx;
             worker.ProgressChanged += backgroundWorker1_ProgressChanged;
-            worker.RunWorkerCompleted += backgroundWorker_2RunWorkerCompleted;
+            worker.RunWorkerCompleted += backgroundWorker_3RunWorkerCompleted;
 
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
@@ -128,16 +131,72 @@ namespace PixelArt
             worker.RunWorkerAsync();
 
         }
+        public void worker_CreateXlsx(object sender, DoWorkEventArgs e)
+        {
+            if (Data.Xl_table == false)
+            {
+                label_invoke_data("");
+                return;
+            }
+            label_invoke_data("Создаю таблицу");
+            Tools.Create_XLSX(sender);
+
+            return;
+        }
+        public void backgroundWorker_3RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // Update UI when operation is complete
+            // e.Result contains the result of the operation
+            //label_invoke_data("");
+            
+            if (progressBar1.InvokeRequired) progressBar1.Invoke(new Action<int>((s) => progressBar1.Value = s), 0);
+            else progressBar1.Value = 0;
+            progressbar_label_Manipulation2();
+            if (tile_path.InvokeRequired || photo_path.InvokeRequired || extile_path.InvokeRequired || ArtName.InvokeRequired || OutputPath.InvokeRequired)
+            {
+                TexBox_SetZero(true);
+            }
+            else
+            {
+                TexBox_SetZero(false);
+            }
+            Data.End = true;
+            SetOn_All();
+            Data.SetZero();
+            labelInvoke2(false);
+            
+            return;
+        }
+        #endregion
+        
+        #region Photo Progress Bar
+        public void CreatePhoto_CoWorker()
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            if (Data.DoWork == false) { return; }
+            worker.DoWork += worker_CreatePhoto;
+            worker.ProgressChanged += backgroundWorker1_ProgressChanged;
+            worker.RunWorkerCompleted += backgroundWorker_2RunWorkerCompleted;
+
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+            
+            worker.RunWorkerAsync();
+
+        }
         //Task<Bitmap> t = Task.Run(() => Tools.CreatePhoto(Data.Photo_tiles_list, Data.list_colors, Data.list_tiles,sender,e));
         //Bitmap result = await t;
         public void worker_CreatePhoto(object sender, DoWorkEventArgs e)
         {
+            if (Data.DoWork == false) { return; }
+            label_invoke_INIT();
             //(sender as BackgroundWorker).ReportProgress(5);
             Data.DataSet();
             Bitmap result = Tools.CreatePhoto(Data.list_colors, Data.list_tiles, sender, e);
             pictureBox1.Image = result;
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             //Data.WorkName = null;
+            
             progressbar_label_Manipulation();
         }
 
@@ -163,32 +222,68 @@ namespace PixelArt
         {
             // Update UI when operation is complete
             // e.Result contains the result of the operation
+            CreatePhoto_CoWorker();
             if (progressBar1.InvokeRequired) progressBar1.Invoke(new Action<int>((s) => progressBar1.Value = s), 0);
             else progressBar1.Value = 0;
             progressbar_label_Manipulation();
+
+
             return;
         }
         public void backgroundWorker_2RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Update UI when operation is complete
             // e.Result contains the result of the operation
-            if (progressBar1.InvokeRequired) progressBar1.Invoke(new Action<int>((s) => progressBar1.Value = s), 0);
-            else progressBar1.Value = 0;
-            progressbar_label_Manipulation2();
-            if (tile_path.InvokeRequired || photo_path.InvokeRequired || extile_path.InvokeRequired || ArtName.InvokeRequired || OutputPath.InvokeRequired)
-            {
-                TexBox_SetZero(true);
-            }
-            else
-            {
-                TexBox_SetZero(false);
-            }
+            CreateXlsx_CoWorker();
+            
             return;
         }
 
         #endregion
 
         #region Independent functions
+        private void SetOff_All()
+        {
+            Data.End = false;
+            ImageGen_Button.Enabled = false;
+            ImageVisual_Button.Enabled = false;
+            button_name.Enabled = false;
+            extile_button.Enabled = false;
+            tile_button.Enabled = false;
+            photo_button.Enabled = false;
+            torch_button.Enabled = false;
+            output_button.Enabled = false;
+            CheckExel.Enabled = false;
+            ArtName.Enabled = false;
+            OutputPath.Enabled = false;
+            tile_path.Enabled = false;
+            photo_path.Enabled = false;
+            extile_path.Enabled = false;
+            torch_path.Enabled = false;
+        }
+        private void SetOn_All()
+        {
+            Data.End = true;
+            ImageGen_Button.Enabled = true;
+            ImageVisual_Button.Enabled = true;
+            button_name.Enabled = true;
+            extile_button.Enabled = true;
+            tile_button.Enabled = true;
+            photo_button.Enabled = true;
+            torch_button.Enabled = true;
+            output_button.Enabled = true;
+            CheckExel.Enabled = true;
+            ArtName.Enabled = true;
+            OutputPath.Enabled = true;
+            tile_path.Enabled = true;
+            photo_path.Enabled = true;
+            extile_path.Enabled = true;
+            torch_path.Enabled = true;
+        }
+        private void CheckExel_CheckedChanged(object sender, EventArgs e)
+        {
+            Data.Xl_table = CheckExel.Checked;
+        }
         private bool PathInsecct(string Text, string ext = "txt")
         {
             if (ext == "txt")
@@ -419,17 +514,12 @@ namespace PixelArt
             photo_path.Text = "";
             ArtName.Text = "";
         }
-        private void labelInvoke(bool shit)
+        private void labelInvoke(bool shit,string data = "")
         {
-            string data;
             if (shit != false)
             {
                 int percent = (int)Math.Round((double)100 * Data.Now_Stage / Data.Then_Stage); 
                 data = Data.WorkName + " - " + percent + "%";
-            }
-            else
-            {
-                data = "";
             }
             if (progressbar_label.InvokeRequired)
             {
@@ -438,6 +528,30 @@ namespace PixelArt
             else
             {
                 progressbar_label.Text = data;
+
+            }
+        }
+        private void label_invoke_data(string data)
+        {
+            if (progressbar_label.InvokeRequired)
+            {
+                progressbar_label.Invoke(new Action<string>((s) => progressbar_label.Text = s), data);
+            }
+            else
+            {
+                progressbar_label.Text = data;
+
+            }
+        }
+        private void label_invoke_INIT()
+        {
+            if (progressbar_label.InvokeRequired)
+            {
+                progressbar_label.Invoke(new Action<string>((s) => progressbar_label.Text = s), "Инициализация");
+            }
+            else
+            {
+                progressbar_label.Text = "Инициализация";
 
             }
         }
@@ -499,7 +613,7 @@ namespace PixelArt
                 ArtName.Invoke(new Action<Color>((s) => ArtName.BackColor = s), Color.White);
                 //OutputPath.Invoke(new Action<Color>((s) => OutputPath.BackColor = s), Color.White);
                 //torch_path.Invoke(new Action<Color>((s) => OutputPath.BackColor = s), Color.White);
-
+                CheckExel.Checked = false;
                 return;
             }
             //tile_path.BackColor = Color.White;
@@ -619,12 +733,15 @@ namespace PixelArt
             torch_path.BackColor = Color.LemonChiffon;
         }
         // Main Buttons Right
+        
         private void ImageGen_Click(object sender, EventArgs e)
         {
             if (!AllCheck(1) || CheckAllData(1))
             {
                 return;
             }
+            SetOff_All();
+            Data.DoWork = true;
             Data.Percent = 0;
             Data.save_path = Data.output_path + Data.art_name + "\\";
             Tools.CreateDirectory(Data.save_path, 1);
@@ -637,6 +754,8 @@ namespace PixelArt
             {
                 return;
             }
+            SetOff_All();
+            Data.DoWork = true;
             Data.Percent = 0;
             Data.save_path = Data.output_path + Data.art_name + "\\";
             Tools.CreateDirectory(Data.save_path, 1);
@@ -652,10 +771,6 @@ namespace PixelArt
 
 
 
-
-
-        #endregion
-
         private void YT_Button_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://www.youtube.com/@mksk8888");
@@ -665,6 +780,25 @@ namespace PixelArt
         {
             System.Diagnostics.Process.Start("https://github.com/MKSO4KA/PixArtTerraria");
         }
+        private async void cancel_button_Click(object sender, EventArgs e)
+        {
+            Data.DoWork = false;
+            //var t = Task.Run(() => System.Threading.Thread.Sleep(300));
+            //Task.WaitAll(t);
+            await Task.Run(() => SetLabel_ZERO());
+            SetOn_All();
+            labelInvoke(false, "");
+        }
+        private bool SetLabel_ZERO()
+        {
+            labelInvoke(false,"Отменяю");
+            System.Threading.Thread.Sleep(10000);
+            return true;
+        }
+
+        #endregion
+
+
     }
     public class Data
     {
@@ -684,6 +818,7 @@ namespace PixelArt
          *              string art_name
          *              string output_path
          *              string torch_path
+         *              bool Xl_table
          *             }     
          * BehindScene = {
          *              Color[] list_colors
@@ -722,7 +857,9 @@ namespace PixelArt
                              save_path;
 
         // Bool values
-        public static bool new_img = true;
+        public static bool Xl_table = false,
+                           DoWork = true,
+                           End = true;
         // Color arrays
         public static Color[] list_colors;
         // String arrays
@@ -734,6 +871,7 @@ namespace PixelArt
         #region Functions
         public static void DataSet()
         {
+
             if (extile_path != String.Empty && extile_path != null)
             {
                 Data.Photo_tiles_list = Tools.fileREAD(extile_path);
@@ -749,12 +887,39 @@ namespace PixelArt
         }
         public static void Init()
         {
-            Data.tiles_path = String.Empty;
-            Data.photo_path = String.Empty;
-            Data.extile_path = String.Empty;
-            Data.art_name = String.Empty;
-            Data.output_path = String.Empty;
-            Data.Percent = 0;
+            Data.Now_Stage = 
+                Data.Then_Stage = 
+                    Data.Percent = 
+                        Data.Percent2 = 0;
+            Data.tiles_path = 
+                Data.photo_path = 
+                    Data.extile_path = 
+                        Data.art_name = 
+                            Data.output_path = String.Empty;
+
+
+        }
+        public static void SetZero()
+        {
+            Data.Xl_table = false;
+            Data.Now_Stage =
+                Data.Then_Stage =
+                    Data.Percent =
+                        Data.Percent2 = 0;
+            Data.extile_path =
+                Data.art_name =
+                    Data.photo_path =
+                        Data.WorkName =
+                            x =
+                                y =
+                                    xstart =
+                                        torch_path =
+                                            save_path = String.Empty;
+            Data.Photo_tiles_list = 
+                Data.list_tiles = 
+                    Data.File_Photo_list = null;
+            Tools.CellColors = new List<Color>();
+
         }
 
 

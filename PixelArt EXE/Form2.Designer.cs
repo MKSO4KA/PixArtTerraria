@@ -55,6 +55,8 @@
             this.Git_Button = new System.Windows.Forms.Button();
             this.YT_Button = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.CheckExel = new System.Windows.Forms.CheckBox();
+            this.cancel_button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -174,9 +176,9 @@
             // 
             this.ImageGen_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ImageGen_Button.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ImageGen_Button.Location = new System.Drawing.Point(385, 380);
+            this.ImageGen_Button.Location = new System.Drawing.Point(390, 380);
             this.ImageGen_Button.Name = "ImageGen_Button";
-            this.ImageGen_Button.Size = new System.Drawing.Size(138, 58);
+            this.ImageGen_Button.Size = new System.Drawing.Size(130, 60);
             this.ImageGen_Button.TabIndex = 0;
             this.ImageGen_Button.Text = "Генерировать\r\nизображение";
             this.ImageGen_Button.UseVisualStyleBackColor = true;
@@ -186,9 +188,9 @@
             // 
             this.ImageVisual_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ImageVisual_Button.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ImageVisual_Button.Location = new System.Drawing.Point(588, 380);
+            this.ImageVisual_Button.Location = new System.Drawing.Point(600, 378);
             this.ImageVisual_Button.Name = "ImageVisual_Button";
-            this.ImageVisual_Button.Size = new System.Drawing.Size(138, 58);
+            this.ImageVisual_Button.Size = new System.Drawing.Size(130, 60);
             this.ImageVisual_Button.TabIndex = 3;
             this.ImageVisual_Button.Text = "Визуализировать\r\nизображение";
             this.ImageVisual_Button.UseVisualStyleBackColor = true;
@@ -289,7 +291,7 @@
             // 
             // Git_Button
             // 
-            this.Git_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources._1664028034_GitHub_не_будет_использовать_термин_мастер_потому_что_он_расистский_780x443;
+            this.Git_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources.GH_image;
             this.Git_Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Git_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Git_Button.FlatAppearance.BorderSize = 0;
@@ -303,7 +305,7 @@
             // 
             // YT_Button
             // 
-            this.YT_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources.TAmniu4VreY;
+            this.YT_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources.YT_image;
             this.YT_Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.YT_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.YT_Button.FlatAppearance.BorderSize = 0;
@@ -317,17 +319,42 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(385, 67);
+            this.pictureBox1.Location = new System.Drawing.Point(390, 67);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(341, 307);
+            this.pictureBox1.Size = new System.Drawing.Size(340, 307);
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
+            // 
+            // CheckExel
+            // 
+            this.CheckExel.AutoSize = true;
+            this.CheckExel.Location = new System.Drawing.Point(239, 380);
+            this.CheckExel.Name = "CheckExel";
+            this.CheckExel.Size = new System.Drawing.Size(112, 17);
+            this.CheckExel.TabIndex = 29;
+            this.CheckExel.Text = "Create Exel table?";
+            this.CheckExel.UseVisualStyleBackColor = true;
+            this.CheckExel.CheckedChanged += new System.EventHandler(this.CheckExel_CheckedChanged);
+            // 
+            // cancel_button
+            // 
+            this.cancel_button.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cancel_button.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cancel_button.Location = new System.Drawing.Point(526, 393);
+            this.cancel_button.Name = "cancel_button";
+            this.cancel_button.Size = new System.Drawing.Size(68, 45);
+            this.cancel_button.TabIndex = 30;
+            this.cancel_button.Text = "ОТМЕНА";
+            this.cancel_button.UseVisualStyleBackColor = true;
+            this.cancel_button.Click += new System.EventHandler(this.cancel_button_Click);
             // 
             // Form2
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.ClientSize = new System.Drawing.Size(747, 450);
+            this.Controls.Add(this.cancel_button);
+            this.Controls.Add(this.CheckExel);
             this.Controls.Add(this.Git_Button);
             this.Controls.Add(this.YT_Button);
             this.Controls.Add(this.torch_button);
@@ -391,5 +418,7 @@
         private System.Windows.Forms.Button torch_button;
         private System.Windows.Forms.Button YT_Button;
         private System.Windows.Forms.Button Git_Button;
+        private System.Windows.Forms.CheckBox CheckExel;
+        private System.Windows.Forms.Button cancel_button;
     }
 }
