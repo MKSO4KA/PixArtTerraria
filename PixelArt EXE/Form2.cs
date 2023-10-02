@@ -740,6 +740,7 @@ namespace PixelArt
             {
                 return;
             }
+            Data.Xl_table = CheckExel.Checked;
             SetOff_All();
             Data.DoWork = true;
             Data.Percent = 0;
@@ -754,6 +755,7 @@ namespace PixelArt
             {
                 return;
             }
+            Data.Xl_table = CheckExel.Checked;
             SetOff_All();
             Data.DoWork = true;
             Data.Percent = 0;
