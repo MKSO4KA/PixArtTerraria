@@ -17,7 +17,7 @@ namespace PixelArt
     /// </summary>  
     internal static class Tools
     {
-        private static int pixelcount = 67;
+        private static int pixelcount = 87;
         private static string HexConverter(System.Drawing.Color c)
         {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
@@ -52,11 +52,16 @@ namespace PixelArt
             Cell cell;
             Style style;
             Color color;
-            
+            string[] list_tiles = Data.list_tiles;
+            string[] blocks = Data.list_blocks;
+            string item;
+            string[] items;
+            string[] Countion = new string[Cells.Length];
             for (int x = 0; x < Xend; x++)
             {
                 for (int y = 0; y < Yend; y++)
                 {
+                    
                     if (Data.DoWork == false) { return; }
                     int indent = y * Xend + x;
                     color = Colors[index];
@@ -71,6 +76,7 @@ namespace PixelArt
                     style.BackgroundColor = wb.Colors[55];
                     style.Pattern = BackgroundType.Solid;
                     style.Font.Color = ReverseCol(color);
+                    style.Font.Size = 7;
                     style.IsTextWrapped = true;
                     style.SetBorder(BorderType.LeftBorder, CellBorderType.Thin, color == Color.Black? Color.Gray : Color.Black);
                     style.SetBorder(BorderType.RightBorder, CellBorderType.Thin, color == Color.Black ? Color.Gray : Color.Black);
@@ -78,13 +84,34 @@ namespace PixelArt
                     style.SetBorder(BorderType.BottomBorder, CellBorderType.Thin, color == Color.Black ? Color.Gray : Color.Black);
                     #endregion
                     cell.SetStyle(style);
-                    cell.PutValue(indent.ToString() + "\n" + Cells[index] + "\n" + index);
+                    item = blocks[Array.IndexOf(list_tiles, Cells[index])];
+                    Countion[index] = item;
+                    items = item.Split(':');
+                    //item = Cells[index].Split()[]
+                    cell.PutValue($"{indent}\n{Cells[index]}\n{index}\n{items[0]}\n{items[1]}\n{items[2]}");
                     //cell.HtmlString = "<Font Style=\"FONT-FAMILY: Arial;FONT-SIZE: 10pt;COLOR: " + colorstr + ";\"></Font>";
                     index++;
                 }
 
             }
+            // how many insect(хз, вхождений тип)
+            int count;
             
+            string[] UniqueCountion = Countion.Distinct().ToArray();
+            string[] counts = new string[UniqueCountion.Length];
+            int[] int_counts = new int[UniqueCountion.Length];
+            for (int i = 0; i < UniqueCountion.Length; i++)
+            {
+                count = Countion.Count(a => a == UniqueCountion[i]);
+                int_counts[i] = count;
+                counts[i] = $"{UniqueCountion[i]}  -  {count}";
+            }
+            Array.Sort(int_counts,counts);
+            File.WriteAllLines(Data.save_path + Data.art_name + "-blocks.txt",counts);
+
+
+
+
             Cells cells = sheet.Cells;
             for (int x = 0; x < Xend; x++)
             {
@@ -136,6 +163,7 @@ namespace PixelArt
             //File.WriteAllLines(Data.save_path + "photo.txt", list);
             int MainIndex = 0;
             Color CellColor;
+            Color[] ThenColors = new Color[0];
             foreach (var Chunk2 in parts)
             {
                 if (Data.DoWork == false) { return; }
@@ -170,7 +198,7 @@ namespace PixelArt
                     (sender as BackgroundWorker).ReportProgress(Tools.EqProgressBarInc(index, maxindex, parts.Length, 2));
                     if (item.A < 20)
                     {
-                        lp = "3:0:0";
+                        lp = "3:0:0:Air-Null";
                         CellColors.Add(Color.White);
                     }
                     else
@@ -183,11 +211,14 @@ namespace PixelArt
                     FileMassive[index] = lp;
                     index++;
                 }
+                ThenColors = ThenColors.Concat(Main_File).ToArray();
                 MainFile = MainFile.Concat(FileMassive).ToList();
                 //File.AppendAllLines(@"C:\ARTs\sda\aasd.txt", FileMassive);
 
             }
             #endregion
+            
+            Data.ThenColors = Tools.RemDuple(ThenColors);
             Data.File_Photo_list = MainFile.ToArray();
             (sender as BackgroundWorker).ReportProgress(Tools.SetZeroPercentage());
 
@@ -215,6 +246,7 @@ namespace PixelArt
             //double hue, saturation, value;
             list_tiles = fileREAD(filepath);
             list_colors = new Color[list_tiles.Length];
+            string[] list_blocks = new string[list_tiles.Length];
             // Create list of tiles colors.
             for (int i = 0; i < list_tiles.Length; i++)
             {
@@ -224,13 +256,16 @@ namespace PixelArt
 
             foreach (var item in list_tiles)
             {
+                int index = Array.IndexOf(list_tiles, item);
                 var line = item.Split(':');
                 var new_line = line[0] + ":" + line[1] + ":" + line[2];
-                list_tiles[Array.IndexOf(list_tiles, item)] = new_line;
+                var new_line2 = line[4] + ":" + line[5] + ":" + line[6];
+                list_tiles[index] = new_line;
+                list_blocks[index] = new_line2;
             }
             //list_tiles = list_tiles.ToList().Append("3:0:0").ToArray();
             //list_colors = list_colors.ToList().Append(Color.FromArgb(0,0,0,0)).ToArray();
-
+            Data.list_blocks = list_blocks;
         }
         #endregion
         
@@ -250,6 +285,7 @@ namespace PixelArt
             Bitmap bitmap;
             string[] array;
             Data.WorkName = null;
+            
             if (Data.File_Photo_list == null)
             {
                 array = File.ReadAllLines(Data.extile_path);
@@ -270,6 +306,8 @@ namespace PixelArt
             (sender as BackgroundWorker).ReportProgress(Tools.SetZeroPercentage());
             bitmap = new Bitmap(x, y);
             Data.WorkName = "Генерирую Картинку";
+            Color color;
+            List<Color> Colors = new List<Color>();
             for (var i = 0; i < x; i++)
             {
                 //mc.BrogB_Increase(i, bitmap.Width);
@@ -277,7 +315,6 @@ namespace PixelArt
                 //mc.BrogB_Increase2(10);
                 hstart = appreform + i * y;
                 //System.Threading.Thread.Sleep(100);
-                Color color;
                 if (Data.DoWork == false) { goto endWork; }
                 for (var j = 0; j < y; j++)
                 {
@@ -293,9 +330,11 @@ namespace PixelArt
                         bitmap.SetPixel(i, j, color);
                         CellColors.Add(color);
                     }
+                    Colors.Add(color);
                     //var pixel = bitmap.GetPixel(i, j);
                 }
             }
+            Data.AllColorsThen = Colors.ToArray();
             Data.WorkName = null;
             endWork:
             SaveAll();
@@ -349,8 +388,14 @@ namespace PixelArt
             return array;
         }
         #endregion
-        
+
         #region Color Manipulation
+        /// <summary>
+        /// Возвращает лист с количеством встреч каждого цвета
+        /// </summary>
+        /// <param name="UniqueColors"> отсортированые цвета </param>
+        /// <param name="AllColors"> Неотсортированые цвета </param>
+        /// <returns></returns>
         public static int[] ColorsCount(Color[] UniqueColors, Color[] AllColors) //Архив с колвом встреч
         {
             int[] list = new int[UniqueColors.Length];
@@ -361,13 +406,23 @@ namespace PixelArt
             return list;
         }
 
-        private static int ColorInputs(Color[] Photo_notSort)
+        private static string[] ColorInputs()
         {
             // 3 mass
-            Color[] Photo_Sort = Tools.RemDuple(Photo_notSort);
-            //label1.Text = Tools.CountInput_color(Photo_notSort, Photo_Sort[2]).ToString();
-            int[] list = Tools.ColorsCount(Photo_Sort, Photo_notSort);
-            return list.Length;
+            string[] TilesList = Data.list_tiles;
+            Color[] ColorsList = Data.list_colors;
+            Color[] SortColors = Data.ThenColors;
+            Color[] NotSortColors = Data.AllColorsThen;  
+            // Индексы фото-сорта и Файл-листа равны всегда.
+            int[] list = Tools.ColorsCount(SortColors, NotSortColors);
+            string[] inXls = new string[SortColors.Length];
+            Color color;
+            for (int i = 0; i < SortColors.Length;i++)
+            {
+                color = SortColors[i];
+                inXls[i] = $"{TilesList[Array.IndexOf(ColorsList, color)].Split(':')[3]}:{list[i]}";
+            }
+            return inXls;
         }
         public static void ColorToHSV(Color color, out double hue, out double saturation, out double value)
         {
@@ -443,6 +498,11 @@ namespace PixelArt
             List<Color> colors2 = colors.ToList();
             return closestColor2(colors2, target);
         }
+        /// <summary>
+        /// Сортирует лист с цветами с помощью метода Distinct
+        /// </summary>
+        /// <param name="lst">Лист с цветами</param>
+        /// <returns></returns>
         public static Color[] RemDuple(Color[] lst)
         {
             lst = lst.Distinct().ToArray();

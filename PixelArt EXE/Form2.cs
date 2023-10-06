@@ -839,6 +839,9 @@ namespace PixelArt
         #region Constants
 
         // List<string> values
+        /// <summary>
+        /// Лист с номерами
+        /// </summary>
         public static List<string> Numlist = new List<string> { "1", "2", "3", "4","5","6","7","8","9","0" };
         // Int values
         public static int Now_Stage,
@@ -863,11 +866,14 @@ namespace PixelArt
                            DoWork = true,
                            End = true;
         // Color arrays
-        public static Color[] list_colors;
+        public static Color[] list_colors,
+                              ThenColors,
+                              AllColorsThen;
         // String arrays
         public static string[] list_tiles,
                                Photo_tiles_list,
-                               File_Photo_list;
+                               File_Photo_list,
+                               list_blocks;
         #endregion
 
         #region Functions
@@ -921,7 +927,9 @@ namespace PixelArt
                 Data.list_tiles = 
                     Data.File_Photo_list = null;
             Tools.CellColors = new List<Color>();
-
+            Data.ThenColors = null;
+            Data.AllColorsThen = null;
+            Data.list_blocks = null;
         }
 
 
