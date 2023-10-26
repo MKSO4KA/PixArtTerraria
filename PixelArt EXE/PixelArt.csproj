@@ -55,6 +55,9 @@
     <Reference Include="Aspose.Cells, Version=23.9.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
       <HintPath>..\packages\Aspose.Cells.23.9.0\lib\net40\Aspose.Cells.dll</HintPath>
     </Reference>
+    <Reference Include="LibDithering, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibDithering.1.0.0\lib\netstandard2.0\LibDithering.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

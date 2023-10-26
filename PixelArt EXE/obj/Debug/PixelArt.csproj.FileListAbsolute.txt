@@ -1,0 +1,16 @@
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\PixelArt EXE.exe.config
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\PixelArt EXE.exe
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\PixelArt EXE.pdb
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\Aspose.Cells.dll
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\LibDithering.dll
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\Aspose.Cells.xml
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\bin\Debug\LibDithering.xml
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.csproj.AssemblyReference.cache
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.csproj.SuggestedBindingRedirects.cache
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.Form2.resources
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt_EXE.Properties.Resources.resources
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.csproj.GenerateResource.cache
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.csproj.CoreCompileInputs.cache
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt.csproj.CopyComplete
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt EXE.exe
+C:\Users\Сисьадмин\Source\Repos\MKSO4KA\PixArtTerraria\PixelArt EXE\obj\Debug\PixelArt EXE.pdb

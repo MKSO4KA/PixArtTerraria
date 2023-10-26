@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -109,7 +110,13 @@ namespace PixelArt
             label_invoke_INIT();
 
             Data.DataSet();
+            /*if (Data.Dither == true)
+            {
+                Bitmap bmp = Dithering()
+                Tools.CreateTilesPhoto(sender, e, bmp);
+            }*/
             Tools.CreateTilesPhoto(sender, e);
+            return;
             //if (!PhotoVisualise_ChekArg()) { return; }
             
         }
@@ -192,7 +199,7 @@ namespace PixelArt
             label_invoke_INIT();
             //(sender as BackgroundWorker).ReportProgress(5);
             Data.DataSet();
-            Bitmap result = Tools.CreatePhoto(Data.list_colors, Data.list_tiles, sender, e);
+            Bitmap result = Tools.CreatePhoto(Data.list_colors.ToArray(), Data.list_tiles, sender, e);
             pictureBox1.Image = result;
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             //Data.WorkName = null;
@@ -696,14 +703,19 @@ namespace PixelArt
             }
             return;
         }
-        
         private void ButtonName_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = (Bitmap)Image.FromFile(@"C:\Users\Сисьадмин\Downloads\PN0073-min.jpg");
+            Tools.Sobel_Operator(sender, e, bmp).Save(@"C:\Users\Сисьадмин\11.jpg");
+
+        }
+        /*private void ButtonName_Click(object sender, EventArgs e)
         {
             
             if (IsStringEqLetter(ArtName.Text)) { Data.art_name = null; ArtName.BackColor = Color.White; return; }
             Data.art_name = ArtName.Text;
             ArtName.BackColor = Color.LemonChiffon;
-        }
+        }*/
         private void tile_button_Click(object sender, EventArgs e)
         {
             tile_path.Text = Tools.Filepath_Dialog("tiles file");
@@ -866,9 +878,9 @@ namespace PixelArt
                            DoWork = true,
                            End = true;
         // Color arrays
-        public static Color[] list_colors,
-                              ThenColors,
+        public static Color[] ThenColors,
                               AllColorsThen;
+        public static HashSet<Color> list_colors;
         // String arrays
         public static string[] list_tiles,
                                Photo_tiles_list,
@@ -887,7 +899,7 @@ namespace PixelArt
             if (tiles_path != String.Empty && tiles_path.Contains(".txt"))
             {
                 Tools.Enumerating(out Color[] list_colors, out string[] list_tiles);
-                Data.list_colors = list_colors;
+                Data.list_colors = list_colors.ToHashSet();
                 Data.list_tiles = list_tiles;
 
 
