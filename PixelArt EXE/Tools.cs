@@ -155,11 +155,9 @@ namespace PixelArt
             var parts = Enumerable.Range(0, nChunks)
                                   .Select(i => Photo_notSort.Skip(i * chunkLength).Take(chunkLength)).ToArray();
             if (Data.DoWork == false) { return; }
-            //string[] list = new string[] { "1", xstart.ToString() + ":" + x.ToString(), y.ToString() };
             Data.x = x.ToString();
             Data.y = y.ToString();
             Data.xstart = xstart.ToString();
-            //File.WriteAllLines(Data.save_path + "photo.txt", list);
             int MainIndex = 0;
             Color CellColor;
             Color[] ThenColors = new Color[0];
@@ -237,11 +235,11 @@ namespace PixelArt
         /// <param name="list_tiles">System.String лист</param>
         public static void Enumerating(out Color[] list_colors, out string[] list_tiles)
         {
-            
-            // vid 1:4:29:000000
+
+            // 1:4:29:000000:Block:Torches:ShadowPaint
             //(double, double, double)[] list_frompic = Tools.RemDuple(GetHueMass());
             string filepath = Data.tiles_path;
-            Color color;
+            string[] line;
             //double hue, saturation, value;
             list_tiles = fileREAD(filepath);
             list_colors = new Color[list_tiles.Length];
@@ -249,18 +247,10 @@ namespace PixelArt
             // Create list of tiles colors.
             for (int i = 0; i < list_tiles.Length; i++)
             {
-                color = ColorTranslator.FromHtml("#" + list_tiles[i].Split(':')[3]);
-                list_colors[i] = color;
-            }
-
-            foreach (var item in list_tiles)
-            {
-                int index = Array.IndexOf(list_tiles, item);
-                var line = item.Split(':');
-                var new_line = line[0] + ":" + line[1] + ":" + line[2];
-                var new_line2 = line[4] + ":" + line[5] + ":" + line[6];
-                list_tiles[index] = new_line;
-                list_blocks[index] = new_line2;
+                list_colors[i] = ColorTranslator.FromHtml("#" + list_tiles[i].Split(':')[3]);
+                line = list_tiles[i].Split(':');
+                list_tiles[i] = String.Join(String.Empty, new string[3] { line[0], line[1], line[2] });
+                list_blocks[i] = String.Join(String.Empty, new string[3] { line[4], line[5], line[6] });
             }
             //list_tiles = list_tiles.ToList().Append("3:0:0").ToArray();
             //list_colors = list_colors.ToList().Append(Color.FromArgb(0,0,0,0)).ToArray();
@@ -581,7 +571,7 @@ namespace PixelArt
             Data.Percent2 = percent;
             return percent;
         }
-
+        #region Dialogs (FBD or OFD)
         public static string Filepath_Dialog(string message)
         {
             var filePath = string.Empty;
@@ -613,6 +603,7 @@ namespace PixelArt
                 return "";
             }
         }
+        #endregion
         private static Bitmap Blur(Bitmap image, Int32 blurSize)
         {
             return Blur(image, new Rectangle(0, 0, image.Width, image.Height), blurSize);
