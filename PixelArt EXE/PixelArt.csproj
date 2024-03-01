@@ -82,7 +82,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tools.cs" />
-    <Compile Include="ToolsNew.cs" />
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
