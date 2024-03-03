@@ -39,6 +39,7 @@ namespace PixelArt.Tools
         }
         private static List<(double, double)> HueRange = new List<(double, double)>(24)
         {
+            (352.5, 7.5),
             (7.5, 22.5),
             (22.5, 37.5),
             (37.5, 52.5),
