@@ -10,7 +10,7 @@ namespace PixelArt.Tools
     internal class ColorApproximater
     {
         /// <summary>
-        /// This code snippet defines a private enumeration called _color, which represents different colors. 
+        /// Private enumeration called _color, which represents different colors. 
         /// </summary>
         private enum _color 
         { 
