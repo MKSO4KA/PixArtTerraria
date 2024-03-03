@@ -97,66 +97,65 @@ namespace PixelArt.Tools
             (337.5, 352.5)
         };
 
-        public static List<List<Color>> HueRgbRange = Colors.SetHueEqRgb();
-        public static List<List<Color>> _colors = new List<List<Color>>();
-        private static List<Color> list_colors = Data.list_colors.ToList();
+        public List<List<Color>> HueRgbRange = SetHueEqRgb();
+        public List<List<Color>> _colors = new List<List<Color>>();
+        private List<Color> list_colors = Data.list_colors.ToList();
         /// <summary>
         ///The Colors class contains several static methods for working with colors.
         /// </summary>
-        internal static class Colors
+        #region Colors
+        /// <summary>
+        ///The SetHueEqRgb method creates a new list of color lists, where each inner list contains colors corresponding to a specific degree range. This method uses the GetColorsFromHueRange method, which is defined elsewhere in the code.
+        /// </summary>
+        /// <returns></returns>
+        public static List<List<Color>> SetHueEqRgb()
         {
-            /// <summary>
-            ///The GetColors method returns a list of all colors represented as a list of lists. Each inner list contains colors corresponding to a specific range of degrees.
-            /// </summary>
-            /// <returns><see cref="_colors"/></returns>
-            public static List<List<Color>> GetColors()
+            (double, double) Hue;
+            List<List<Color>> list = new List<List<Color>>(24);
+            for (int i = 0; i < HueRange.Count; i += 1)
             {
-                return _colors;
+                Hue = HueRange[i];
+                list.Add(GetColorsFromHueRange(Hue));
             }
-            /// <summary>
-            /// The GetColors(int id) method returns a list of colors for a specific id. The ID is used to select a specific degree range.
-            /// </summary>
-            /// <param name="id">The ID is used to select a specific degree range.</param>
-            /// <returns></returns>
-            public static List<Color> GetColors(int id)
+            list[HueRange.Count - 1].RemoveAt(list[HueRange.Count - 1].Count - 1);
+            return list;
+        }
+        /// <summary>
+        ///The SetColors method initializes the _colors list and fills it with the colors from list_colors. It then sorts each internal list by its color degree value
+        /// </summary>
+        public void SetColors()
+        {
+            for (int i = 0; i < 24; i += 1)
             {
-                return _colors[id];
+                _colors.Add(new List<Color>());
             }
-            /// <summary>
-            ///The SetHueEqRgb method creates a new list of color lists, where each inner list contains colors corresponding to a specific degree range. This method uses the GetColorsFromHueRange method, which is defined elsewhere in the code.
-            /// </summary>
-            /// <returns></returns>
-            public static List<List<Color>> SetHueEqRgb()
+            foreach (Color color in list_colors)
             {
-                (double, double) Hue;
-                List<List<Color>> list = new List<List<Color>>(24);
-                for (int i = 0; i < HueRange.Count; i += 1)
-                {
-                    Hue = HueRange[i];
-                    list.Add(GetColorsFromHueRange(Hue));
-                }
-                list[HueRange.Count - 1].RemoveAt(list[HueRange.Count - 1].Count - 1);
-                return list;
+                _colors[GetIndexOfColor(color)].Add(color);
             }
-            /// <summary>
-            ///The SetColors method initializes the _colors list and fills it with the colors from list_colors. It then sorts each internal list by its color degree value
-            /// </summary>
-            public static void SetColors()
+            for (int ind = 0; ind < _colors.Count; ind += 1)
             {
-                for (int i = 0; i < 24; i += 1)
-                {
-                    _colors.Add(new List<Color>());
-                }
-                foreach (Color color in list_colors)
-                {
-                    _colors[GetIndexOfColor(color)].Add(color);
-                }
-                for (int ind = 0; ind < _colors.Count; ind += 1)
-                {
-                    _colors[ind] = _colors[ind].OrderBy(x => x.GetHue()).ToList();
-                }
+                _colors[ind] = _colors[ind].OrderBy(x => x.GetHue()).ToList();
             }
         }
+        /// <summary>
+        ///The GetColors method returns a list of all colors represented as a list of lists. Each inner list contains colors corresponding to a specific range of degrees.
+        /// </summary>
+        /// <returns><see cref="_colors"/></returns>
+        public List<List<Color>> GetColors()
+        {
+            return _colors;
+        }
+        /// <summary>
+        /// The GetColors(int id) method returns a list of colors for a specific id. The ID is used to select a specific degree range.
+        /// </summary>
+        /// <param name="id">The ID is used to select a specific degree range.</param>
+        /// <returns></returns>
+        public List<Color> GetColors(int id)
+        {
+            return _colors[id];
+        }
+        #endregion
         /// <summary>
         ///The Conversation class contains several static methods for converting colors from the hsl color model.
         /// </summary>
@@ -274,7 +273,7 @@ namespace PixelArt.Tools
         /// <br></br> This index is the hue index (one of twenty-four)</summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        private static int GetIndexOfColor(Color color)
+        private int GetIndexOfColor(Color color)
         {
             List<double> diffs = new List<double>(HueRange.Count * 16);
             for (int rangeInd = 0; rangeInd < HueRange.Count; rangeInd++)
@@ -328,10 +327,10 @@ namespace PixelArt.Tools
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static Color? Convert(Color color)
+        public Color? Convert(Color color)
         {
             List<double> Diffs = new List<double>();
-            var Array = Colors.GetColors(GetIndexOfColor(color));
+            var Array = GetColors(GetIndexOfColor(color));
             foreach (var item in Array)
             {
                 Diffs.Add(ColorDiff(item, color));
