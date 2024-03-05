@@ -14,12 +14,12 @@ namespace PixelArt.Tools
         /// <summary>
         /// Call:
         /// <br></br>     Color color = Color.White;
-        /// <br></br>     ColorApproximater Approximater = new ColorApproximater();
+        /// <br></br>     ColorApproximater Approximater = new ColorApproximater(list_colors);
         /// <br></br>     var cl = Approximater.Convert(color);
         /// </summary>
-        public ColorApproximater()
+        public ColorApproximater(Color[] colorslist, int maxlenght = 10000)
         {
-            _maxLenght = 200000;
+            _maxLenght = maxlenght;
             _hueRgbRange = SetHueEqRgb();
             _findedColors = new List<Color>();
             _convertedColors = new List<Color>();
@@ -115,11 +115,21 @@ namespace PixelArt.Tools
             (337.5, 352.5)
         };
         private static int _maxLenght;
+        public static int MaxLenght
+        {
+            get { return _maxLenght; }
+        }
         private static List<Color> _findedColors;
         private static List<Color> _convertedColors;
         public List<List<Color>> _hueRgbRange;
         public List<List<Color>> _colors;
         private List<Color> _list_colors;
+        public void Reset()
+        {
+            _findedColors.Clear();
+            _convertedColors.Clear();
+        }
+        
         
         /// <summary>
         ///The Colors class contains several static methods for working with colors.
@@ -269,11 +279,12 @@ namespace PixelArt.Tools
         {
             return Conversation.ToRGB(H, S, L);
         }
-        private static void ResetConverted()
+        private static void ResetAHalfOfConverted()
         {
-            _findedColors.Clear();
-            _convertedColors.Clear();
+            _findedColors = _findedColors.Skip(MaxLenght/2).ToList();
+            _convertedColors = _convertedColors.Skip(MaxLenght / 2).ToList();
         }
+        
         /// <summary>
         ///The static ColorDiff method calculates the difference between two colors. 
         ///The method takes two objects of the Color class as arguments and returns a double value representing the difference between the colors.
@@ -375,7 +386,7 @@ namespace PixelArt.Tools
             _convertedColors.Add(color2);
             if (_findedColors.Count == _maxLenght)
             {
-                ResetConverted();
+                ResetAHalfOfConverted();
             }
             return color2;
         }

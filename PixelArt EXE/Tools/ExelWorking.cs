@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PixelArt_EXE.Tools
+namespace PixelArt.Tools
 {
-    internal class PhotoTile
+    internal class ExelWorking
     {
 
     }

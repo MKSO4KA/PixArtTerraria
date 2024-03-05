@@ -291,7 +291,7 @@
             // 
             // Git_Button
             // 
-            this.Git_Button.BackgroundImage = global::PixelArt.Properties.Resources.GH_image;
+            this.Git_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources.GH_image;
             this.Git_Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Git_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Git_Button.FlatAppearance.BorderSize = 0;
@@ -305,7 +305,7 @@
             // 
             // YT_Button
             // 
-            this.YT_Button.BackgroundImage = global::PixelArt.Properties.Resources.YT_image;
+            this.YT_Button.BackgroundImage = global::PixelArt_EXE.Properties.Resources.YT_image;
             this.YT_Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.YT_Button.Cursor = System.Windows.Forms.Cursors.Hand;
             this.YT_Button.FlatAppearance.BorderSize = 0;
