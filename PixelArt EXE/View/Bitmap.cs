@@ -11,7 +11,7 @@ namespace PixelArt.View
     {
         /* Для меня. Вызов и Инит класса
          * 
-         * Bitmap m = new Bitmap();
+         *  Bitmap m = new Bitmap();
          *  m.PropertyChanged += bmp_PropertyChanged;
          *  public static void bmp_PropertyChanged(object sender, EventArgs e)
          *  {

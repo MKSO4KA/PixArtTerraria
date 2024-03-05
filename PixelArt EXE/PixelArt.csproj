@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Tools.cs" />
     <Compile Include="Tools\ColorApproximater.cs" />
+    <Compile Include="Tools\PhotoTile.cs" />
     <Compile Include="View\Bitmap.cs" />
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>

@@ -10,11 +10,23 @@ namespace PixelArt.Tools
     internal class ColorApproximater
     {
 
-        // Call:
-        //      Color color = Color.White;
-        //      ColorApproximater Approximater = new ColorApproximater();
-        //      Approximater.SetColors();
-        //      var cl = Approximater.Convert(color);
+
+        /// <summary>
+        /// Call:
+        /// <br></br>     Color color = Color.White;
+        /// <br></br>     ColorApproximater Approximater = new ColorApproximater();
+        /// <br></br>     var cl = Approximater.Convert(color);
+        /// </summary>
+        public ColorApproximater()
+        {
+            _maxLenght = 200000;
+            _hueRgbRange = SetHueEqRgb();
+            _findedColors = new List<Color>();
+            _convertedColors = new List<Color>();
+            _colors = new List<List<Color>>();
+            _list_colors = Data.list_colors.ToList();
+            SetColors();
+        }
         /// <summary>
         /// Private enumeration called _color, which represents different colors. 
         /// </summary>
@@ -75,7 +87,7 @@ namespace PixelArt.Tools
         /// For example, the first element of the list (7.5, 22.5) indicates that the color shade Red corresponds to the degree range from 7.5 to 22.5.
         /// This list is used to define the range of degrees for the hue of each color when performing color operations.
         /// </summary>
-        private static List<(double, double)> HueRange = new List<(double, double)>(24)
+        private static readonly List<(double, double)> HueRange = new List<(double, double)>(24)
         {
             (352.5, 7.5),
             (7.5, 22.5),
@@ -102,12 +114,13 @@ namespace PixelArt.Tools
             (322.5, 337.5),
             (337.5, 352.5)
         };
-        private static int MaximumLenght = 200000;
-        private static List<Color> FindedColors = new List<Color>();
-        private static List<Color> ConvertedColors = new List<Color>();
-        public List<List<Color>> HueRgbRange = SetHueEqRgb();
-        public List<List<Color>> _colors = new List<List<Color>>();
-        private List<Color> list_colors = new List<Color>() { Color.White, Color.Black };
+        private static int _maxLenght;
+        private static List<Color> _findedColors;
+        private static List<Color> _convertedColors;
+        public List<List<Color>> _hueRgbRange;
+        public List<List<Color>> _colors;
+        private List<Color> _list_colors;
+        
         /// <summary>
         ///The Colors class contains several static methods for working with colors.
         /// </summary>
@@ -129,7 +142,7 @@ namespace PixelArt.Tools
             return list;
         }
         /// <summary>
-        ///The SetColors method initializes the _colors list and fills it with the colors from list_colors. It then sorts each internal list by its color degree value
+        ///The SetColors method initializes the _colors list and fills it with the colors from _list_colors. It then sorts each internal list by its color degree value
         /// </summary>
         public void SetColors()
         {
@@ -137,7 +150,7 @@ namespace PixelArt.Tools
             {
                 _colors.Add(new List<Color>());
             }
-            foreach (Color color in list_colors)
+            foreach (Color color in _list_colors)
             {
                 _colors[GetIndexOfColor(color)].Add(color);
             }
@@ -181,9 +194,10 @@ namespace PixelArt.Tools
             /// </summary>
             /// <param name="H">Hue of color</param>
             /// <returns>Color which represented in rgb palette</returns>
+            /// <remarks><see href="https://en.wikipedia.org/wiki/HSL_and_HSV">Wiki Page</see></remarks>
             public static Color ToRGB(double H, double S, double L)
             {
-                // https://en.wikipedia.org/wiki/HSL_and_HSV
+                // 
                 byte r = 0;
                 byte g = 0;
                 byte b = 0;
@@ -257,8 +271,8 @@ namespace PixelArt.Tools
         }
         private static void ResetConverted()
         {
-            FindedColors.Clear();
-            ConvertedColors.Clear();
+            _findedColors.Clear();
+            _convertedColors.Clear();
         }
         /// <summary>
         ///The static ColorDiff method calculates the difference between two colors. 
@@ -281,7 +295,7 @@ namespace PixelArt.Tools
 
         /// <summary>
         /// The GetIndexOfColor method takes a Color object as an argument and returns the index of the color in the HueRange.
-        /// <br></br> Inside the method, a list of diffs is created, which will store the differences between the color color and each color from the HueRgbRange range.
+        /// <br></br> Inside the method, a list of diffs is created, which will store the differences between the color color and each color from the _hueRgbRange range.
         /// <br></br> Then there is a double loop where, for each hue range and each color within that range, the difference is calculated using the ColorDiff method and added to the diffs list.
         /// <br></br> Finally, the method returns the index of the minimum value in the diffs list divided by 16.
         /// <br></br> This index is the hue index (one of twenty-four)</summary>
@@ -292,7 +306,7 @@ namespace PixelArt.Tools
             List<double> diffs = new List<double>(HueRange.Count * 16);
             for (int rangeInd = 0; rangeInd < HueRange.Count; rangeInd++)
             {
-                foreach (var item in HueRgbRange[rangeInd])
+                foreach (var item in _hueRgbRange[rangeInd])
                 {
                     diffs.Add(ColorDiff(color, item));
                 }
@@ -345,9 +359,9 @@ namespace PixelArt.Tools
         public Color? Convert(Color color)
         {
             int index;
-            if ((index = FindedColors.IndexOf(color)) != -1)
+            if ((index = _findedColors.IndexOf(color)) != -1)
             {
-                return ConvertedColors[index];
+                return _convertedColors[index];
             }
             List<double> Diffs = new List<double>();
             var Array = GetColors(GetIndexOfColor(color));
@@ -356,10 +370,10 @@ namespace PixelArt.Tools
                 Diffs.Add(ColorDiff(item, color));
             }
 
-            FindedColors.Add(color);
+            _findedColors.Add(color);
             var color2 = Array[Diffs.IndexOf(Diffs.Min())];
-            ConvertedColors.Add(color2);
-            if (FindedColors.Count == MaximumLenght)
+            _convertedColors.Add(color2);
+            if (_findedColors.Count == _maxLenght)
             {
                 ResetConverted();
             }
