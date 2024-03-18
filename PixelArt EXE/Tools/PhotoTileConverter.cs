@@ -105,7 +105,6 @@ namespace PixelArt.Tools
             ColorApproximater approximater = new ColorApproximater(Colors);
             BitmapBar bar = new BitmapBar(x * y);
             Data.WorkName = "Конвертирую Картинку";
-
             int BarValue = 0;
             foreach (var Chunk in parts)
             {

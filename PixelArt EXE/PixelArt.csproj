@@ -82,6 +82,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tools.cs" />
+    <Compile Include="Tools\BinaryWriter.cs" />
     <Compile Include="Tools\ColorApproximater.cs" />
     <Compile Include="Tools\ExelWorking.cs" />
     <Compile Include="Tools\PhotoTileConverter.cs" />

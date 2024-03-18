@@ -10,7 +10,6 @@ namespace PixelArt.Tools
     internal class ColorApproximater
     {
 
-
         /// <summary>
         /// Call:
         /// <br></br>     Color color = Color.White;

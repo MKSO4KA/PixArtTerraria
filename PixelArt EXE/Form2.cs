@@ -105,9 +105,9 @@ namespace PixelArt
         //Bitmap result = await t;
         public void worker_CreateTiles(object sender, DoWorkEventArgs e)
         {
+            backgroundWorker1.ReportProgress(10);
             //(sender as BackgroundWorker).ReportProgress(5);
             label_invoke_INIT();
-
             Data.DataSet();
             Tools.CreateTilesPhoto(sender, e);
             //if (!PhotoVisualise_ChekArg()) { return; }
@@ -577,15 +577,15 @@ namespace PixelArt
 
             }
         }
-        private void backgoundInvoke(ProgressChangedEventArgs e)
+        private void backgoundInvoke(int value)
         {
             if (progressBar1.InvokeRequired)
             {
-                progressBar1.Invoke(new Action<int>((s) => progressBar1.Value = s), e.ProgressPercentage);
+                progressBar1.Invoke(new Action<int>((s) => progressBar1.Value = s), value);
             }
             else
             {
-                progressBar1.Value = e.ProgressPercentage;
+                progressBar1.Value = value;
             }
         }
         private void Data_Text_Zero()
@@ -625,58 +625,7 @@ namespace PixelArt
         }
         #endregion
 
-        #region Private Trash Do Not Delete
-
-        private void extile_path_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void extile_TB_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void photo_path_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void photo_TB_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void progressBar1_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-        #endregion
-
+        
 
         #region Buttons
         
