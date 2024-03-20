@@ -1,11 +1,13 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace PixelArt.Tools
+
+namespace PixelArt.OldTools
 {
-    public class ColorApproximater
+    internal class ColorApproximater
     {
 
         /// <summary>
@@ -18,30 +20,11 @@ namespace PixelArt.Tools
         {
             _maxLenght = maxlenght;
             _hueRgbRange = SetHueEqRgb();
-            _findedColors = new List<(byte, byte, byte)>();
-            _convertedColors = new List<(byte, byte, byte)>();
-            _colors = new List<List<(byte, byte, byte)>>();
-            _list_colors = ColorsToBytes(colorslist);
+            _findedColors = new List<Color>();
+            _convertedColors = new List<Color>();
+            _colors = new List<List<Color>>();
+            _list_colors = Data.list_colors.ToList();
             SetColors();
-        }
-        public ColorApproximater((byte, byte, byte)[] colorslist, int maxlenght = 10000)
-        {
-            _maxLenght = maxlenght;
-            _hueRgbRange = SetHueEqRgb();
-            _findedColors = new List<(byte, byte, byte)>();
-            _convertedColors = new List<(byte, byte, byte)>();
-            _colors = new List<List<(byte, byte, byte)>>();
-            _list_colors = colorslist;
-            SetColors();
-        }
-        private static (byte, byte, byte)[] ColorsToBytes(Color[] colors)
-        {
-            (byte, byte, byte)[] result = new (byte, byte, byte)[colors.Length];
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = (colors[i].R, colors[i].G, colors[i].B);
-            }
-            return result;
         }
         /// <summary>
         /// Private enumeration called _color, which represents different colors. 
@@ -103,63 +86,62 @@ namespace PixelArt.Tools
         /// For example, the first element of the list (7.5, 22.5) indicates that the color shade Red corresponds to the degree range from 7.5 to 22.5.
         /// This list is used to define the range of degrees for the hue of each color when performing color operations.
         /// </summary>
-        private static readonly List<(float, float)> HueRange = new List<(float, float)>(24)
+        private static readonly List<(double, double)> HueRange = new List<(double, double)>(24)
         {
-            (352.5f, 7.5f),
-            (7.5f, 22.5f),
-            (22.5f, 37.5f),
-            (37.5f, 52.5f),
-            (52.5f, 67.5f),
-            (67.5f, 82.5f),
-            (82.5f, 97.5f),
-            (97.5f, 112.5f),
-            (112.5f, 127.5f),
-            (127.5f, 142.5f),
-            (142.5f, 157.5f),
-            (157.5f, 172.5f),
-            (172.5f, 187.5f),
-            (187.5f, 202.5f),
-            (202.5f, 217.5f),
-            (217.5f, 232.5f),
-            (232.5f, 247.5f),
-            (247.5f, 262.5f),
-            (262.5f, 277.5f),
-            (277.5f, 292.5f),
-            (292.5f, 307.5f),
-            (307.5f, 322.5f),
-            (322.5f, 337.5f),
-            (337.5f, 352.5f)
+            (352.5, 7.5),
+            (7.5, 22.5),
+            (22.5, 37.5),
+            (37.5, 52.5),
+            (52.5, 67.5),
+            (67.5, 82.5),
+            (82.5, 97.5),
+            (97.5, 112.5),
+            (112.5, 127.5),
+            (127.5, 142.5),
+            (142.5, 157.5),
+            (157.5, 172.5),
+            (172.5, 187.5),
+            (187.5, 202.5),
+            (202.5, 217.5),
+            (217.5, 232.5),
+            (232.5, 247.5),
+            (247.5, 262.5),
+            (262.5, 277.5),
+            (277.5, 292.5),
+            (292.5, 307.5),
+            (307.5, 322.5),
+            (322.5, 337.5),
+            (337.5, 352.5)
         };
         private static int _maxLenght;
         public static int MaxLenght
         {
             get { return _maxLenght; }
         }
-        private static List<(byte, byte, byte)> _findedColors;
-        private static List<(byte, byte, byte)> _convertedColors;
-        public List<List<(byte, byte, byte)>> _hueRgbRange;
-        public List<List<(byte, byte, byte)>> _colors;
-        private (byte, byte, byte)[] _list_colors;
-        private static List<int> skip_colorslist = new List<int>();
+        private static List<Color> _findedColors;
+        private static List<Color> _convertedColors;
+        public List<List<Color>> _hueRgbRange;
+        public List<List<Color>> _colors;
+        private List<Color> _list_colors;
         public void Reset()
         {
             _findedColors.Clear();
             _convertedColors.Clear();
         }
-
-
+        
+        
         /// <summary>
         ///The Colors class contains several static methods for working with colors.
         /// </summary>
         #region Colors
         /// <summary>
-        ///The SetHueEqRgb method creates a new list of color lists, where each inner list contains colors corresponding to a specific degree range. This method uses the GetColorsFromHueRange method.
+        ///The SetHueEqRgb method creates a new list of color lists, where each inner list contains colors corresponding to a specific degree range. This method uses the GetColorsFromHueRange method, which is defined elsewhere in the code.
         /// </summary>
         /// <returns></returns>
-        public static List<List<(byte, byte, byte)>> SetHueEqRgb()
+        public static List<List<Color>> SetHueEqRgb()
         {
-            (float, float) Hue;
-            List<List<(byte, byte, byte)>> list = new List<List<(byte, byte, byte)>>(24);
+            (double, double) Hue;
+            List<List<Color>> list = new List<List<Color>>(24);
             for (int i = 0; i < HueRange.Count; i += 1)
             {
                 Hue = HueRange[i];
@@ -168,51 +150,6 @@ namespace PixelArt.Tools
             list[HueRange.Count - 1].RemoveAt(list[HueRange.Count - 1].Count - 1);
             return list;
         }
-        private float GetHue(byte r, byte g, byte b)
-        {
-
-            if (r == g && g == b)
-                return 0f;
-
-            MinMaxRgb(out int min, out int max, r, g, b);
-
-            float delta = max - min;
-            float hue;
-
-            if (r == max)
-                hue = (g - b) / delta;
-            else if (g == max)
-                hue = (b - r) / delta + 2f;
-            else
-                hue = (r - g) / delta + 4f;
-
-            hue *= 60f;
-            if (hue < 0f)
-                hue += 360f;
-
-            return hue;
-        }
-        private static void MinMaxRgb(out int min, out int max, byte r, byte g, byte b)
-        {
-            if (r > g)
-            {
-                max = r;
-                min = g;
-            }
-            else
-            {
-                max = g;
-                min = r;
-            }
-            if (b > max)
-            {
-                max = b;
-            }
-            else if (b < min)
-            {
-                min = b;
-            }
-        }
         /// <summary>
         ///The SetColors method initializes the _colors list and fills it with the colors from _list_colors. It then sorts each internal list by its color degree value
         /// </summary>
@@ -220,27 +157,22 @@ namespace PixelArt.Tools
         {
             for (int i = 0; i < 24; i += 1)
             {
-                _colors.Add(new List<(byte, byte, byte)>());
+                _colors.Add(new List<Color>());
             }
-            foreach ((byte, byte, byte) color in _list_colors)
+            foreach (Color color in _list_colors)
             {
-                _colors[GetIndexOfColor(color)].Add((color.Item1, color.Item2, color.Item3));
+                _colors[GetIndexOfColor(color)].Add(color);
             }
             for (int ind = 0; ind < _colors.Count; ind += 1)
             {
-                _colors[ind] = _colors[ind].OrderBy(x => GetHue(x.Item1, x.Item2, x.Item3)).ToList();
-            }
-            for (int i = 0; i < GetColors().Count; i++)
-            {
-                if (GetColors(i).Count == 0)
-                    skip_colorslist.Add(i);
+                _colors[ind] = _colors[ind].OrderBy(x => x.GetHue()).ToList();
             }
         }
         /// <summary>
         ///The GetColors method returns a list of all colors represented as a list of lists. Each inner list contains colors corresponding to a specific range of degrees.
         /// </summary>
         /// <returns><see cref="_colors"/></returns>
-        public List<List<(byte, byte, byte)>> GetColors()
+        public List<List<Color>> GetColors()
         {
             return _colors;
         }
@@ -249,7 +181,7 @@ namespace PixelArt.Tools
         /// </summary>
         /// <param name="id">The ID is used to select a specific degree range.</param>
         /// <returns></returns>
-        public List<(byte, byte, byte)> GetColors(int id)
+        public List<Color> GetColors(int id)
         {
             return _colors[id];
         }
@@ -296,31 +228,6 @@ namespace PixelArt.Tools
                 }
 
                 return Color.FromArgb(r, g, b);
-            }
-            public static (byte, byte, byte) ToBytes(double H, double S, double L)
-            {
-                // 
-                byte r = 0;
-                byte g = 0;
-                byte b = 0;
-                if (S == 0)
-                {
-                    r = g = b = (byte)(L * 255);
-                }
-                else
-                {
-                    double v1, v2;
-                    double hue = (double)H / 360;
-
-                    v2 = (L < 0.5) ? (L * (1 + S)) : ((L + S) - (L * S));
-                    v1 = 2 * L - v2;
-
-                    r = (byte)(255 * HueToRGB(v1, v2, hue + (1.0f / 3)));
-                    g = (byte)(255 * HueToRGB(v1, v2, hue));
-                    b = (byte)(255 * HueToRGB(v1, v2, hue - (1.0f / 3)));
-                }
-
-                return (r, g, b);
             }
             /// <summary>
             /// HueToRGB takes v1, v2, and vH as arguments and returns a double representing the RGB color component.
@@ -371,16 +278,12 @@ namespace PixelArt.Tools
         {
             return Conversation.ToRGB(H, S, L);
         }
-        private static (byte, byte, byte) HSLToBytes(double H, double S = 1, double L = 0.5)
-        {
-            return Conversation.ToBytes(H, S, L);
-        }
         private static void ResetAHalfOfConverted()
         {
-            _findedColors = _findedColors.Skip(MaxLenght / 2).ToList();
+            _findedColors = _findedColors.Skip(MaxLenght/2).ToList();
             _convertedColors = _convertedColors.Skip(MaxLenght / 2).ToList();
         }
-
+        
         /// <summary>
         ///The static ColorDiff method calculates the difference between two colors. 
         ///The method takes two objects of the Color class as arguments and returns a double value representing the difference between the colors.
@@ -392,18 +295,13 @@ namespace PixelArt.Tools
         /// <param name="c1">Color1</param>
         /// <param name="c2">Color2</param>
         /// <returns></returns>
-        public static float ColorDiff(Color c1, Color c2)
+        public static double ColorDiff(Color c1, Color c2)
         {
-            return (float)Math.Sqrt((c1.R - c2.R) * (c1.R - c2.R)
+            return (double)Math.Sqrt((c1.R - c2.R) * (c1.R - c2.R)
                                  + (c1.G - c2.G) * (c1.G - c2.G)
                                  + (c1.B - c2.B) * (c1.B - c2.B));
         }
-        public static float ColorDiff((byte, byte, byte) c1, (byte, byte, byte) c2)
-        {
-            return (float)Math.Sqrt((c1.Item1 - c2.Item1) * (c1.Item1 - c2.Item1)
-                                 + (c1.Item2 - c2.Item2) * (c1.Item2 - c2.Item2)
-                                 + (c1.Item3 - c2.Item3) * (c1.Item3 - c2.Item3));
-        }
+
 
         /// <summary>
         /// The GetIndexOfColor method takes a Color object as an argument and returns the index of the color in the HueRange.
@@ -415,41 +313,9 @@ namespace PixelArt.Tools
         /// <returns></returns>
         private int GetIndexOfColor(Color color)
         {
-            List<float> diffs = new List<float>(HueRange.Count * 16);
-            List<float> tmp = new List<float> {
-                720, 720, 720, 720,
-                720, 720, 720, 720,
-                720, 720, 720, 720,
-                720, 720, 720, 720};
+            List<double> diffs = new List<double>(HueRange.Count * 16);
             for (int rangeInd = 0; rangeInd < HueRange.Count; rangeInd++)
             {
-                if (skip_colorslist.Contains(rangeInd))
-                {
-                    diffs.AddRange(tmp);
-                    continue;
-                }
-                foreach (var item in _hueRgbRange[rangeInd])
-                {
-                    diffs.Add(ColorDiff(color, Color.FromArgb(item.Item1, item.Item2, item.Item3)));
-                }
-            }
-            return (int)Math.Floor((double)diffs.IndexOf(diffs.Min()) / 16);
-        }
-        private int GetIndexOfColor((byte, byte, byte) color)
-        {
-            List<float> diffs = new List<float>(HueRange.Count * 16);
-            List<float> tmp = new List<float> {
-                720, 720, 720, 720,
-                720, 720, 720, 720,
-                720, 720, 720, 720,
-                720, 720, 720, 720};
-            for (int rangeInd = 0; rangeInd < HueRange.Count; rangeInd++)
-            {
-                if (skip_colorslist.Contains(rangeInd))
-                {
-                    diffs.AddRange(tmp);
-                    continue;
-                }
                 foreach (var item in _hueRgbRange[rangeInd])
                 {
                     diffs.Add(ColorDiff(color, item));
@@ -467,26 +333,26 @@ namespace PixelArt.Tools
         /// </summary>
         /// <param name="hue"></param>
         /// <returns></returns>
-        private static List<(byte, byte, byte)> GetColorsFromHueRange((float, float) hue)
+        private static List<Color> GetColorsFromHueRange((double, double) hue)
         {
-            float min = hue.Item1, max = hue.Item2;
-            List<(byte, byte, byte)> list = new List<(byte, byte, byte)>(16);
+            double min = hue.Item1, max = hue.Item2;
+            List<Color> list = new List<Color>(16);
             if (min == 352.5)
             {
-                for (float degree = min; degree < 360; degree += 1)
+                for (double degree = min; degree < 360; degree += 1)
                 {
-                    list.Add(HSLToBytes(degree));
+                    list.Add(HSLToRGB(degree));
                 }
-                for (float degree = 0.5f; degree <= hue.Item2; degree += 1)
+                for (double degree = 0.5; degree <= hue.Item2; degree += 1)
                 {
-                    list.Add(HSLToBytes(degree));
+                    list.Add(HSLToRGB(degree));
                 }
             }
             else
             {
-                for (float degree = hue.Item1; degree <= hue.Item2; degree += 1)
+                for (double degree = hue.Item1; degree <= hue.Item2; degree += 1)
                 {
-                    list.Add(HSLToBytes(degree));
+                    list.Add(HSLToRGB(degree));
                 }
             }
             return list;
@@ -500,16 +366,15 @@ namespace PixelArt.Tools
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public byte[] Convert((byte, byte, byte) color)
+        public Color? Convert(Color color)
         {
             int index;
             if ((index = _findedColors.IndexOf(color)) != -1)
             {
-                return new byte[3] { _convertedColors[index].Item1, _convertedColors[index].Item2, _convertedColors[index].Item3 };
+                return _convertedColors[index];
             }
             List<double> Diffs = new List<double>();
-            int indas = GetIndexOfColor(color);
-            var Array = GetColors(indas);
+            var Array = GetColors(GetIndexOfColor(color));
             foreach (var item in Array)
             {
                 Diffs.Add(ColorDiff(item, color));
@@ -522,8 +387,7 @@ namespace PixelArt.Tools
             {
                 ResetAHalfOfConverted();
             }
-            return new byte[3] { color2.Item1, color2.Item2, color2.Item3 };
+            return color2;
         }
     }
-
 }
