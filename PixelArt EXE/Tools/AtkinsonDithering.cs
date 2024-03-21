@@ -1,5 +1,7 @@
-﻿using System;
+﻿//#define OpenCv
+using System;
 using System.Drawing;
+using PixelArt.Structs;
 
 namespace PixelArt.Tools
 {
@@ -624,7 +626,8 @@ namespace PixelArt.Tools
 
             return image;
         }
-        /*
+#if OpenCv
+        
         public static Bitmap Do(Mat img, ColorApproximater approximater)
         {
             Bitmap image = img.ToBitmap();
@@ -641,8 +644,8 @@ namespace PixelArt.Tools
 
             return image;
         }
-        */ // openCV
-
+        
+#endif
         private static byte[,,] ReadBitmapToColorBytes(Bitmap bitmap)
         {
             byte[,,] returnValue = new byte[bitmap.Width, bitmap.Height, 3];
@@ -661,16 +664,21 @@ namespace PixelArt.Tools
 
         private static void WriteToBitmap(Bitmap bitmap, Func<int, int, byte[]> reader)
         {
+            BinaryWorker worker = new BinaryWorker();
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height; y++)
                 {
+
                     byte[] read = reader(x, y);
+                    worker.FileValues.Add(_approximater.GetColor((read[0], read[1], read[2])));
                     Color color = Color.FromArgb(read[0], read[1], read[2]);
                     bitmap.SetPixel(x, y, color);
                 }
             }
+            worker.Write((ushort)bitmap.Width, (ushort)bitmap.Height);
         }
     }
+
 }
 

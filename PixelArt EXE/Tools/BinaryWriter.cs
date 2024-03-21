@@ -7,31 +7,33 @@ using System.Threading.Tasks;
 
 namespace PixelArt.Tools
 {
-    internal class BinaryWorker
+    public class BinaryWorker
     {
-        public static void Main()
-        {
-            BinaryWorker worker = new BinaryWorker();
-            worker.Write(new List<ushort>() { 12, 32, 324, 352, 564 });
-            worker.Read();
-        }
         /// <summary>
         /// Path of result while <3
         /// </summary>
         internal string Path
         {
-            private get { return @"C:\фыв\TET.txt"; }
+            private get { return @"C:\wallpapers\TET.txt"; }
             set { Path = value; }
         }
+        public List<(bool, bool, ushort, byte)> FileValues = new List<(bool, bool, ushort, byte)>();
 
-
-        internal List<ushort> Read()
+        internal List<(bool, bool, ushort, byte)> Read()
         {
-            List<ushort> Array = new List<ushort>();
+            List<(bool, bool, ushort, byte)> Array = new List<(bool, bool, ushort, byte)>();
             byte[] bytes = File.ReadAllBytes(Path);
-            for (int i = 0; i < bytes.Length && i + 1 < bytes.Length; i += 2)
+            ushort WidthStart = (ushort)((bytes[0] & 0xff) + ((bytes[1] & 0xff) << 8));
+            ushort Width = (ushort)((bytes[2] & 0xff) + ((bytes[3] & 0xff) << 8));
+            ushort Height = (ushort)((bytes[4] & 0xff) + ((bytes[5] & 0xff) << 8));
+            for (int i = 6; i < bytes.Length && i + 4 < bytes.Length; i += 5)
             {
-                Array.Add((ushort)((bytes[i] & 0xff) + ((bytes[i + 1] & 0xff) << 8)));
+                Array.Add((
+                    Convert.ToBoolean(bytes[i]),
+                    Convert.ToBoolean(bytes[i + 1]),
+                    (ushort)((bytes[i + 2] & 0xff) + ((bytes[i + 3] & 0xff) << 8)),
+                    bytes[i + 4]
+                    ));
             }
             return Array;
         }
@@ -52,20 +54,24 @@ namespace PixelArt.Tools
             // Temp Also Add TO Git
             return tmp + result;
         }
-        internal void Write(List<ushort> Array = null)
+        internal void Write(ushort Width, ushort Height, ushort WidthStart = 0, List<(bool, bool, ushort, byte)> Array = null)
         {
-
+            Array = Array ?? FileValues;
             using (var stream = File.Open(Path, FileMode.Create))
             {
 
                 using (var binaryWriter = new BinaryWriter(stream, Encoding.UTF8, false))
                 {
-                    binaryWriter.Write((ushort)Array[0]); // WidthStart
-                    binaryWriter.Write((ushort)Array[1]); // width
-                    binaryWriter.Write((ushort)Array[2]); // height
-                    for (int index = 3; index < Array.Count; index++)
+                    binaryWriter.Write(WidthStart); // WidthStart
+                    binaryWriter.Write(Width); // width
+                    binaryWriter.Write(Height); // height
+                    for (int index = 0; index < Array.Count; index++)
                     {
-                        binaryWriter.Write(Array[index]); // Pixel
+                        binaryWriter.Write(Array[index].Item1); // Wall?
+                        binaryWriter.Write(Array[index].Item2); // Torch?
+                        binaryWriter.Write(Array[index].Item3); // Id
+                        binaryWriter.Write(Array[index].Item4); // Paint
+
                     }
                 }
 
@@ -74,4 +80,5 @@ namespace PixelArt.Tools
 
         }
     }
+
 }

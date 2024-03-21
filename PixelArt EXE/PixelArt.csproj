@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Structs\Pixel.cs" />
     <Compile Include="Tools\AtkinsonDithering.cs" />
     <Compile Include="Tools\ColorApproximater.cs" />
     <Compile Include="Form2.cs">

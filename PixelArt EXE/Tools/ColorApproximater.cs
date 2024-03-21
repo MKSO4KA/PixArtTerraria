@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define OpenCv
+using Aspose.Cells.Revisions;
+using PixelArt.Structs;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -14,7 +17,7 @@ namespace PixelArt.Tools
         /// <br></br>     ColorApproximater Approximater = new ColorApproximater(list_colors);
         /// <br></br>     var cl = Approximater.Convert(color);
         /// </summary>
-        public ColorApproximater(Color[] colorslist, int maxlenght = 10000)
+        public ColorApproximater(Color[] colorslist, int maxlenght = 1000)
         {
             _maxLenght = maxlenght;
             _hueRgbRange = SetHueEqRgb();
@@ -24,7 +27,7 @@ namespace PixelArt.Tools
             _list_colors = ColorsToBytes(colorslist);
             SetColors();
         }
-        public ColorApproximater((byte, byte, byte)[] colorslist, int maxlenght = 10000)
+        public ColorApproximater((byte, byte, byte)[] colorslist, int maxlenght = 1000)
         {
             _maxLenght = maxlenght;
             _hueRgbRange = SetHueEqRgb();
@@ -34,6 +37,56 @@ namespace PixelArt.Tools
             _list_colors = colorslist;
             SetColors();
         }
+        public ColorApproximater(Pixels colorslist, int maxlenght = 1000)
+        {
+            _pixels = colorslist;
+            _maxLenght = maxlenght;
+            _hueRgbRange = SetHueEqRgb();
+            _findedColors = new List<(byte, byte, byte)>();
+            _convertedColors = new List<(byte, byte, byte)>();
+            _colors = new List<List<(byte, byte, byte)>>();
+            _list_colors = colorslist.GetColors().ToArray();
+            SetColors();
+        }
+        public (bool, bool, ushort, byte) GetColor((byte, byte, byte) a)
+        {
+            return _pixels.GetPixels()[_pixels.GetColors().IndexOf(a)];
+        }
+
+        /// <summary>
+        /// The Convert method takes a Color object as an argument and returns a Color? object.
+        /// <br></br>Inside the method, an empty Diffs list is created that will store the differences between the color of the color and each color in the array obtained using the GetColors method and the index obtained using the GetIndexOfColor method.
+        /// <br></br> Next, a loop occurs in which for each color from the array the difference is calculated using the ColorDiff method and added to the Diffs list.
+        /// <br></br> Finally, the method returns the color from the array that has the minimum color difference.
+        /// <br></br>
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public byte[] Convert((byte, byte, byte) color)
+        {
+            int index;
+            if ((index = _findedColors.IndexOf(color)) != -1)
+            {
+                return new byte[3] { _convertedColors[index].Item1, _convertedColors[index].Item2, _convertedColors[index].Item3 };
+            }
+            List<double> Diffs = new List<double>();
+            int indas = GetIndexOfColor(color);
+            var Array = GetColors(indas);
+            foreach (var item in Array)
+            {
+                Diffs.Add(ColorDiff(item, color));
+            }
+
+            _findedColors.Add(color);
+            var color2 = Array[Diffs.IndexOf(Diffs.Min())];
+            _convertedColors.Add(color2);
+            if (_findedColors.Count == _maxLenght)
+            {
+                ResetAHalfOfConverted();
+            }
+            return new byte[3] { color2.Item1, color2.Item2, color2.Item3 };
+        }
+
         private static (byte, byte, byte)[] ColorsToBytes(Color[] colors)
         {
             (byte, byte, byte)[] result = new (byte, byte, byte)[colors.Length];
@@ -141,6 +194,7 @@ namespace PixelArt.Tools
         public List<List<(byte, byte, byte)>> _colors;
         private (byte, byte, byte)[] _list_colors;
         private static List<int> skip_colorslist = new List<int>();
+        private Pixels _pixels;
         public void Reset()
         {
             _findedColors.Clear();
@@ -491,39 +545,97 @@ namespace PixelArt.Tools
             }
             return list;
         }
-        /// <summary>
-        /// The Convert method takes a Color object as an argument and returns a Color? object.
-        /// <br></br>Inside the method, an empty Diffs list is created that will store the differences between the color of the color and each color in the array obtained using the GetColors method and the index obtained using the GetIndexOfColor method.
-        /// <br></br> Next, a loop occurs in which for each color from the array the difference is calculated using the ColorDiff method and added to the Diffs list.
-        /// <br></br> Finally, the method returns the color from the array that has the minimum color difference.
-        /// <br></br>
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public byte[] Convert((byte, byte, byte) color)
-        {
-            int index;
-            if ((index = _findedColors.IndexOf(color)) != -1)
-            {
-                return new byte[3] { _convertedColors[index].Item1, _convertedColors[index].Item2, _convertedColors[index].Item3 };
-            }
-            List<double> Diffs = new List<double>();
-            int indas = GetIndexOfColor(color);
-            var Array = GetColors(indas);
-            foreach (var item in Array)
-            {
-                Diffs.Add(ColorDiff(item, color));
-            }
 
-            _findedColors.Add(color);
-            var color2 = Array[Diffs.IndexOf(Diffs.Min())];
-            _convertedColors.Add(color2);
-            if (_findedColors.Count == _maxLenght)
-            {
-                ResetAHalfOfConverted();
-            }
-            return new byte[3] { color2.Item1, color2.Item2, color2.Item3 };
-        }
+
+
     }
+
+#if OpenCv
+#region _             Calc Bluriness. It needs OpenCv. NOW IT DID NOT WORK
+    static (double, double) CalcBlurriness(Mat src, Mat dst)
+    {
+        return (calcBlurriness(src), calcBlurriness(dst));
+    }
+    static double calcBlurriness(Mat src)
+    {
+        Mat Gx = new Mat();
+        Mat Gy = new Mat();
+        CvInvoke.Sobel(src, Gx, Emgu.CV.CvEnum.DepthType.Cv32F, 1, 0);
+        CvInvoke.Sobel(src, Gy, Emgu.CV.CvEnum.DepthType.Cv32F, 0, 1);
+        double normGx = CvInvoke.Norm(Gx);
+        double normGy = CvInvoke.Norm(Gy);
+        double sumSq = normGx * normGx + normGy * normGy;
+        double result = (double)(1.0 / (sumSq / (src.Size.Height * src.Size.Width) + 1e-6));
+        return result;
+    }
+    public static void GradientFinder()
+    {
+        var approximater = new ColorApproximater(new Color[] { Color.White, Color.Black });
+        Bitmap image = new Bitmap("C:\\wallpapers\\2.jpg");
+        Bitmap result = (Bitmap)image.Clone();
+
+        Rectangle rect;
+        Mat def, dst = new Mat();
+        int sqr = 20;
+        int squareSize = image.Width < sqr ? image.Width : sqr, squareSizeX = squareSize, squareSizeY = squareSize; // Разбиваем на квадраты 30x30
+        for (int x = 0; x < image.Width; x += squareSize)
+        {
+            for (int y = 0; y < image.Height; y += squareSize)
+            {
+                if (x + squareSize >= image.Width)
+                {
+                    squareSizeX = image.Width - x;
+                    if (squareSizeX <= 0) { continue; }
+                }
+                else
+                {
+                    squareSizeX = squareSize;
+                }
+                if (y + squareSize >= image.Height)
+                {
+                    squareSizeY = image.Height - y;
+                    if (squareSizeY <= 0) { continue; }
+                }
+                else
+                {
+                    squareSizeY = squareSize;
+                }
+                rect = new Rectangle(x, y, squareSizeX, squareSizeY);
+
+                using (Bitmap square = image.Clone(rect, image.PixelFormat))
+                {
+                    def = square.ToMat();
+                    CvInvoke.Canny(def, dst, 250, 300);
+                    var bluriness = CalcBlurriness(def, dst);
+                    Graphics gr;
+                    switch (bluriness.Item1)
+                    {
+                        case > 0.00001 when Math.Round(bluriness.Item2, 7) > 0.000009 && bluriness.Item2 != 1000000: // 0.00006
+                            gr = Graphics.FromImage(result);
+                            gr.DrawImage(AtkinsonDithering.Do(def, approximater), rect);
+                            gr.Dispose();
+
+                            break;
+                        case > 0.00001 when bluriness.Item2 != 1000000: // 0.00006
+                            Console.WriteLine($"Найдены границы, объект {bluriness} {(x, y)}");
+                            CvInvoke.Imshow("dst image", dst);
+                            CvInvoke.Imshow("orig image", def);
+                            { CvInvoke.WaitKey(1); }
+                            break;
+                        default:
+                            //Console.WriteLine($"Градиент, скорее всего. Не найдено границ. {bluriness}");
+                            gr = Graphics.FromImage(result);
+                            gr.DrawImage(AtkinsonDithering.Do(def, approximater), rect);
+                            gr.Dispose();
+                            break;
+                    }
+                }
+            }
+        }
+
+        result.Save("C:\\wallpapers\\7.jpg");
+    }
+#endregion
+#endif
 
 }
