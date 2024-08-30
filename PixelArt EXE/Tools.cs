@@ -14,7 +14,7 @@ namespace PixelArt
     /// <summary>
     /// Инструменты/Функции, которые требуются для работы
     /// </summary>  
-    internal static class Tools
+    internal static class Toolss
     {
         private static int pixelcount = 87;
         private static string HexConverter(System.Drawing.Color c)

@@ -67,7 +67,6 @@
             this.tile_path.Name = "tile_path";
             this.tile_path.Size = new System.Drawing.Size(277, 20);
             this.tile_path.TabIndex = 5;
-            this.tile_path.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.tile_path.Leave += new System.EventHandler(this.tile_path_TextBoxUI);
             // 
             // photo_path
@@ -77,7 +76,6 @@
             this.photo_path.Name = "photo_path";
             this.photo_path.Size = new System.Drawing.Size(277, 20);
             this.photo_path.TabIndex = 6;
-            this.photo_path.TextChanged += new System.EventHandler(this.photo_path_TextChanged);
             this.photo_path.Leave += new System.EventHandler(this.photo_path_TextBoxUI);
             // 
             // extile_path
@@ -87,7 +85,6 @@
             this.extile_path.Name = "extile_path";
             this.extile_path.Size = new System.Drawing.Size(277, 20);
             this.extile_path.TabIndex = 7;
-            this.extile_path.TextChanged += new System.EventHandler(this.extile_path_TextChanged);
             this.extile_path.Leave += new System.EventHandler(this.extile_path_TextBoxUI);
             // 
             // OutputPath
@@ -127,7 +124,6 @@
             this.Tiles_TB.Size = new System.Drawing.Size(127, 13);
             this.Tiles_TB.TabIndex = 12;
             this.Tiles_TB.Text = "Введите путь до тайлов";
-            this.Tiles_TB.Click += new System.EventHandler(this.label4_Click);
             // 
             // photo_TB
             // 
@@ -138,7 +134,6 @@
             this.photo_TB.Size = new System.Drawing.Size(154, 13);
             this.photo_TB.TabIndex = 13;
             this.photo_TB.Text = "Введите путь до фотографии";
-            this.photo_TB.Click += new System.EventHandler(this.photo_TB_Click);
             // 
             // extile_TB
             // 
@@ -149,7 +144,6 @@
             this.extile_TB.Size = new System.Drawing.Size(236, 13);
             this.extile_TB.TabIndex = 14;
             this.extile_TB.Text = "Введите путь до обработанного ранее файла";
-            this.extile_TB.Click += new System.EventHandler(this.extile_TB_Click);
             // 
             // Output_Directory_TB
             // 
@@ -160,7 +154,6 @@
             this.Output_Directory_TB.Size = new System.Drawing.Size(206, 13);
             this.Output_Directory_TB.TabIndex = 16;
             this.Output_Directory_TB.Text = "Введите путь до  выходной директории";
-            this.Output_Directory_TB.Click += new System.EventHandler(this.label2_Click);
             // 
             // ArtName_TB
             // 
@@ -257,7 +250,6 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(340, 26);
             this.progressBar1.TabIndex = 8;
-            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click_1);
             // 
             // torch_TB
             // 
