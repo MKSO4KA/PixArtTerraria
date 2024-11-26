@@ -68,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Structs\Pixel.cs" />
+    <Compile Include="Tools\AtkinsonDithering.cs" />
+    <Compile Include="Tools\ColorApproximater.cs" />
     <Compile Include="Form2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,12 +85,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tools.cs" />
-    <Compile Include="ToolsNew.cs" />
+    <Compile Include="Tools\BinaryWriter.cs" />
+    <Compile Include="Tools\ColorApproximaterOld.cs" />
+    <Compile Include="Tools\ExelWorking.cs" />
+    <Compile Include="Tools\PhotoTileConverter.cs" />
+    <Compile Include="View\Bitmap.cs" />
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -125,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\YT-image.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DefaultImage.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
